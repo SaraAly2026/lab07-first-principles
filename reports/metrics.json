@@ -1,0 +1,7 @@
+{
+    "test_mse": 14.833175010681153,
+    "test_mae": 2.553420661290487,
+    "selected_learning_rate": 0.01,
+    "best_epoch": 16,
+    "hidden_size": 64
+}
