@@ -70,32 +70,57 @@ I saved the learning curves for the main model and each learning rate experiment
 
 ## 7. Final Test Results
 
-After selecting the best learning rate using validation data, I evaluated the final model on the test dataset.
+## 7. Final Test Results
 
-| Metric | Result |
-|---|---:|
-| Test MSE | 14.83 |
-| Test MAE | 2.55 |
-| Selected Learning Rate | 0.01 |
+After selecting the best learning rate using validation data, I evaluated the final neural network on the test dataset and compared it with the baseline models.
 
-The test MAE of 2.55 means the model's predictions were off by approximately 2.55 bike rentals on average.
+| Model | Validation MAE | Test MAE |
+|---|---:|---:|
+| Mean Baseline | 9.95 | 9.85 |
+| Linear Regression | 9.03 | 8.76 |
+| Neural Network (selected) | 2.62 | 2.55 |
 
-The test result was close to the validation MAE of 2.62, suggesting that the model generalized reasonably well to unseen data.
+The selected neural network used a learning rate of 0.01 and a hidden size of 64.
+
+The final neural network achieved a test MSE of 14.83 and a test MAE of 2.55.
+
+This means the neural network's predictions were off by approximately 2.55 bike rentals on average.
+
+The neural network performed better than both baseline models on the validation and test datasets. The similar validation and test MAE values suggest that the model generalized reasonably well to unseen data.
 
 ## 8. Testing
 
-I used pytest to test the data split, dataset shapes, and neural network output shape.
+I used pytest to check different parts of the data preparation and neural network training process.
 
-All three automated tests passed.
+I created eight test functions covering:
+
+Data splitting into training, validation, and test sets.
+
+Dataset feature shapes and data types.
+
+Neural network output shape.
+
+Fitting the scaler using training data only.
+
+Reproducible DataLoader batches using a fixed random seed.
+
+Updating model weights during training.
+
+Keeping model weights unchanged during validation.
+
+Testing different batch sizes using pytest.mark.parametrize.
+
+All 11 test cases passed successfully.
 
 I also ran a small-batch memorization test to confirm that the neural network could learn a very small dataset.
 
 Results:
 
-- Initial Loss: 33.7721
-- Final Loss: 0.0000
-- Loss Ratio: 0.000000
+Initial Loss: 33.7721
 
+Final Loss: 0.0000
+
+Loss Ratio: 0.000000
 ## 9. How to Run
 
 Install the required packages:
@@ -128,6 +153,7 @@ Check the code quality:
 ```bash
 python -m ruff check .
 ```
+python -m ruff format --check .
 
 ## 10. Results and Reflection
 

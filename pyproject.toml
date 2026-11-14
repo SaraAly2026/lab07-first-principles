@@ -9,3 +9,5 @@ src = [".", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+[tool.ruff.format]
+exclude = ["bikes_data.py"]

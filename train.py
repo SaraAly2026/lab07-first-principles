@@ -375,6 +375,19 @@ if __name__ == "__main__":
     final_metrics["best_epoch"] = final_best_epoch
     final_metrics["hidden_size"] = 64
 
+    mean_test_mae, linear_test_mae = evaluate_baselines(
+        x_train,
+        train["rentals"].to_numpy(),
+        x_test,
+        test["rentals"].to_numpy(),
+    )
+
+    final_metrics["mean_baseline_test_mae"] = float(mean_test_mae)
+    final_metrics["linear_regression_test_mae"] = float(linear_test_mae)
+
+    print(f"Mean Baseline Test MAE: {mean_test_mae:.2f}")
+    print(f"Linear Regression Test MAE: {linear_test_mae:.2f}")
+
     with open("reports/metrics.json", "w") as file:
         json.dump(final_metrics, file, indent=4)
 

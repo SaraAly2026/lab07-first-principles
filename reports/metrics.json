@@ -3,5 +3,7 @@
     "test_mae": 2.553420661290487,
     "selected_learning_rate": 0.01,
     "best_epoch": 16,
-    "hidden_size": 64
+    "hidden_size": 64,
+    "mean_baseline_test_mae": 9.84839537037037,
+    "linear_regression_test_mae": 8.762954966667404
 }
