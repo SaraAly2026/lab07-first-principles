@@ -1,4 +1,3 @@
-
 """Check whether the network can memorize a small batch."""
 
 import torch
@@ -30,7 +29,7 @@ loss_fn = torch.nn.MSELoss()
 with torch.no_grad():
     initial_loss = loss_fn(model(features), targets).item()
 
-for step in range(1000):
+for _step in range(1000):
     optimizer.zero_grad()
     predictions = model(features)
     loss = loss_fn(predictions, targets)

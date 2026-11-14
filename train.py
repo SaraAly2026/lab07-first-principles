@@ -157,7 +157,6 @@ def plot_learning_curves(
     plt.close()
 
 
-
 def run_experiment(
     name,
     train_dataset,
@@ -199,14 +198,18 @@ def run_experiment(
 
     best_row = history[best_epoch - 1]
 
-    return {
-        "experiment": name,
-        "learning_rate": lr,
-        "best_epoch": best_epoch,
-        "best_validation_mae": best_row["validation_mae"],
-        "final_train_loss": history[-1]["train_loss"],
-        "final_validation_loss": history[-1]["validation_loss"],
-    }, history, best_epoch
+    return (
+        {
+            "experiment": name,
+            "learning_rate": lr,
+            "best_epoch": best_epoch,
+            "best_validation_mae": best_row["validation_mae"],
+            "final_train_loss": history[-1]["train_loss"],
+            "final_validation_loss": history[-1]["validation_loss"],
+        },
+        history,
+        best_epoch,
+    )
 
 
 def evaluate_final_model(model, test_loader):
@@ -379,4 +382,3 @@ if __name__ == "__main__":
     print(f"Test MSE: {final_metrics['test_mse']:.2f}")
     print(f"Test MAE: {final_metrics['test_mae']:.2f}")
     print("Metrics saved to reports/metrics.json")
-

@@ -1,4 +1,3 @@
-
 """Neural network for bike rental prediction."""
 
 import torch
