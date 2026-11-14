@@ -282,3 +282,26 @@ def test_restored_model_matches_best_validation_loss():
     expected_loss = history[best_epoch - 1]["validation_loss"]
 
     assert restored_loss == pytest.approx(expected_loss, abs=1e-5)
+
+
+def test_scaled_features_use_training_statistics():
+    """Check training scaling and reuse of training statistics."""
+    train, validation, test = split_data()
+
+    x_train, x_validation, _, _ = prepare_features(train, validation, test)
+
+    # First five columns are the scaled numeric features.
+    train_means = x_train[:, :5].mean(axis=0)
+    validation_means = x_validation[:, :5].mean(axis=0)
+
+    assert torch.allclose(
+        torch.as_tensor(train_means, dtype=torch.float32),
+        torch.zeros(5),
+        atol=1e-5,
+    )
+
+    assert not torch.allclose(
+        torch.as_tensor(validation_means, dtype=torch.float32),
+        torch.zeros(5),
+        atol=1e-5,
+    )
