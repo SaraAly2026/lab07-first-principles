@@ -70,8 +70,6 @@ I saved the learning curves for the main model and each learning rate experiment
 
 ## 7. Final Test Results
 
-## 7. Final Test Results
-
 After selecting the best learning rate using validation data, I evaluated the final neural network on the test dataset and compared it with the baseline models.
 
 | Model | Validation MAE | Test MAE |
@@ -94,21 +92,14 @@ I used pytest to check different parts of the data preparation and neural networ
 
 I created eight test functions covering:
 
-Data splitting into training, validation, and test sets.
-
-Dataset feature shapes and data types.
-
-Neural network output shape.
-
-Fitting the scaler using training data only.
-
-Reproducible DataLoader batches using a fixed random seed.
-
-Updating model weights during training.
-
-Keeping model weights unchanged during validation.
-
-Testing different batch sizes using pytest.mark.parametrize.
+- Data splitting into training, validation, and test sets.
+- Dataset feature shapes and data types.
+- Neural network output shape.
+- Fitting the scaler using training data only.
+- Reproducible DataLoader batches using a fixed random seed.
+- Updating model weights during training.
+- Keeping model weights unchanged during validation.
+- Testing different batch sizes using `pytest.mark.parametrize`.
 
 All 11 test cases passed successfully.
 
@@ -116,11 +107,10 @@ I also ran a small-batch memorization test to confirm that the neural network co
 
 Results:
 
-Initial Loss: 33.7721
+- Initial Loss: 33.7721
+- Final Loss: 0.0000
+- Loss Ratio: 0.000000
 
-Final Loss: 0.0000
-
-Loss Ratio: 0.000000
 ## 9. How to Run
 
 Install the required packages:
@@ -152,8 +142,8 @@ Check the code quality:
 
 ```bash
 python -m ruff check .
-```
 python -m ruff format --check .
+```
 
 ## 10. Results and Reflection
 
