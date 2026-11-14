@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from model import BikeRentalNet
 from prepare import BikeRentalDataset, prepare_features, split_data
-from train import run_epoch
+from train import run_epoch, train_model
 
 
 def test_data_split():
@@ -159,3 +159,126 @@ def test_model_different_batch_sizes(batch_size):
     predictions = model(features)
 
     assert predictions.shape == torch.Size([batch_size])
+
+
+@pytest.mark.parametrize("hidden_size", [8, 16, 32, 64])
+def test_model_different_hidden_sizes(hidden_size):
+    """Check that the model works with different hidden layer sizes."""
+    model = BikeRentalNet(
+        input_size=8,
+        hidden_size=hidden_size,
+    )
+
+    features = torch.randn(32, 8)
+    predictions = model(features)
+
+    assert predictions.shape == torch.Size([32])
+
+
+def test_data_splits_do_not_overlap():
+    """Check that train, validation, and test have no shared rows."""
+    train, validation, test = split_data()
+
+    train_indices = set(train.index)
+    validation_indices = set(validation.index)
+    test_indices = set(test.index)
+
+    assert train_indices.isdisjoint(validation_indices)
+    assert train_indices.isdisjoint(test_indices)
+    assert validation_indices.isdisjoint(test_indices)
+
+
+def test_best_weights_restoration():
+    """Check that training restores the best validation weights."""
+    torch.manual_seed(2026)
+
+    model = BikeRentalNet(input_size=8, hidden_size=16)
+
+    features = torch.randn(32, 8)
+    targets = torch.randn(32)
+
+    loader = DataLoader(
+        TensorDataset(features, targets),
+        batch_size=16,
+    )
+
+    history, best_epoch = train_model(
+        model,
+        loader,
+        loader,
+        epochs=5,
+        lr=0.01,
+    )
+
+    validation_losses = [epoch["validation_loss"] for epoch in history]
+
+    expected_best_epoch = validation_losses.index(min(validation_losses)) + 1
+
+    assert best_epoch == expected_best_epoch
+    assert len(history) == 5
+
+
+def test_small_batch_memorization():
+    """Check that the network can memorize a small batch."""
+    torch.manual_seed(2026)
+
+    train, validation, test = split_data()
+    x_train, _, _, _ = prepare_features(train, validation, test)
+
+    dataset = BikeRentalDataset(
+        x_train,
+        train["rentals"].to_numpy(),
+    )
+
+    features = dataset.features[:8]
+    targets = dataset.targets[:8]
+
+    model = BikeRentalNet(input_size=features.shape[1])
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    loss_fn = torch.nn.MSELoss()
+
+    with torch.no_grad():
+        initial_loss = loss_fn(model(features), targets).item()
+
+    for _step in range(1000):
+        optimizer.zero_grad()
+        predictions = model(features)
+        loss = loss_fn(predictions, targets)
+        loss.backward()
+        optimizer.step()
+
+    with torch.no_grad():
+        final_loss = loss_fn(model(features), targets).item()
+
+    assert final_loss < initial_loss * 0.01
+
+
+def test_restored_model_matches_best_validation_loss():
+    """Check that restored weights produce the best validation loss."""
+    torch.manual_seed(2026)
+
+    model = BikeRentalNet(input_size=8, hidden_size=16)
+
+    features = torch.randn(32, 8)
+    targets = torch.randn(32)
+
+    loader = DataLoader(
+        TensorDataset(features, targets),
+        batch_size=16,
+    )
+
+    history, best_epoch = train_model(
+        model,
+        loader,
+        loader,
+        epochs=5,
+        lr=0.01,
+    )
+
+    loss_fn = torch.nn.MSELoss()
+
+    restored_loss, _ = run_epoch(model, loader, loss_fn)
+
+    expected_loss = history[best_epoch - 1]["validation_loss"]
+
+    assert restored_loss == pytest.approx(expected_loss, abs=1e-5)

@@ -100,8 +100,13 @@ I created eight test functions covering:
 - Updating model weights during training.
 - Keeping model weights unchanged during validation.
 - Testing different batch sizes using `pytest.mark.parametrize`.
+- Testing different hidden layer sizes.
+- Checking that training, validation, and test splits do not overlap.
+- Verifying that the best validation epoch is selected.
+- Checking small-batch memorization.
+- Verifying that restored model weights reproduce the best validation loss.
 
-All 11 test cases passed successfully.
+All 19 test cases passed successfully.
 
 I also ran a small-batch memorization test to confirm that the neural network could learn a very small dataset.
 
